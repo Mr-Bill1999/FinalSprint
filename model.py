@@ -1,18 +1,17 @@
 from pydantic import BaseModel
 
 class PredictionRequest(BaseModel):
-    feature1: int
-    feature2: int
-    feature3: int
-    feature4: float
-    feature5: float
-    feature6: int
-    feature7: float
-    feature8: int
-    feature9: float
-    feature10: int
-    feature11: int
-    feature12: int
-    feature13: int
-    feature14: int
-
+    id: int
+    Air_temperature_K: float
+    Process_temperature_K: float
+    Rotational_speed_rpm: int
+    Torque_Nm: float
+    Tool_wear_min: int
+    TWF: int
+    HDF: int
+    PWF: int
+    OSF: int
+    RNF: int
+    Type_H: int
+    Type_L: int
+    Type_M: int

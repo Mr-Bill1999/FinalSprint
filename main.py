@@ -5,15 +5,24 @@ from model import PredictionRequest
 app = FastAPI()
 model = joblib.load("trained_stacking_model.joblib")
 
-@app.get("/")
-async def read_root():
-    return {'Великолепная семерка API'}
-
-
 @app.post("/predict/")
 async def predict(data: PredictionRequest):
-    input_data = [[data.feature1, data.feature2, data.feature3,data.feature4,data.feature5,
-                   data.feature6, data.feature7, data.feature8, data.feature9, data.feature10,
-                   data.feature11,data.feature12, data.feature13, data.feature14]]
-    prediction = model.predict(input_data)
+    # Собираем признаки в том же порядке, что при обучении
+    input_row = [[
+        data.id,
+        data.Air_temperature_K,
+        data.Process_temperature_K,
+        data.Rotational_speed_rpm,
+        data.Torque_Nm,
+        data.Tool_wear_min,
+        data.TWF,
+        data.HDF,
+        data.PWF,
+        data.OSF,
+        data.RNF,
+        data.Type_H,
+        data.Type_L,
+        data.Type_M
+    ]]
+    prediction = model.predict(input_row)
     return {"prediction": prediction.tolist()}

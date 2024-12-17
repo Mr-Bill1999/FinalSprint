@@ -1,7 +1,7 @@
 import random
 import requests
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QTimer
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
 
 
 class WorkerThread(QThread):
@@ -15,27 +15,39 @@ class WorkerThread(QThread):
         self.machine_type = machine_type
         self.running = True  # Флаг для управления запуском и остановкой
 
-
     def run(self):
         while self.running:
+            # Генерация случайных значений для полей
+            feature4 = random.uniform(295.3, 304.4)
+            feature5 = random.uniform(305, 313)
+            feature6 = random.randint(1200, 1800)
+            feature7 = random.uniform(19, 103)
+            feature8 = random.randint(-20, 60)
+            feature9 = random.randint(0, 253)
+            feature10 = random.randint(0, 1)
+            feature11 = random.randint(0, 1)
+            feature12 = random.randint(0, 1)
+            feature13 = random.randint(0, 1)
+            feature14 = feature10 + feature11 + feature12 + feature13
+            product_id_numeric = int(''.join(filter(str.isdigit, self.product_id)))  # Убираем буквы
+            machine_type_numeric = {"L": 1, "H": 2, "M": 3}.get(self.machine_type, 0)  # Кодируем буквы
+
             # Формируем данные
             data = {
-                "id": self.widget_id,
-                "Air_temperature_K": random.uniform(295.3, 304.4),
-                "Process_temperature_K": random.uniform(305, 313),
-                "Rotational_speed_rpm": random.randint(1200, 1800),
-                "Torque_Nm": random.uniform(19, 103),
-                "Tool_wear_min": random.randint(0, 240),  # скажем, 0..240 минут?
-                "TWF": random.choices([0, 1], weights=[60, 40])[0],
-                "HDF": random.choices([0, 1], weights=[60, 40])[0],
-                "PWF": random.choices([0, 1], weights=[60, 40])[0],
-                "OSF": random.choices([0, 1], weights=[60, 40])[0],
-                "RNF": random.choices([0, 1], weights=[60, 40])[0],
-
-                # One-hot для типа:
-                "Type_H": 1 if self.machine_type == 'H' else 0,
-                "Type_L": 1 if self.machine_type == 'L' else 0,
-                "Type_M": 1 if self.machine_type == 'M' else 0,
+                "feature1": self.widget_id,
+                "feature2": product_id_numeric,
+                "feature3": machine_type_numeric,
+                "feature4": feature4,
+                "feature5": feature5,
+                "feature6": feature6,
+                "feature7": feature7,
+                "feature8": feature8,
+                "feature9": feature9,
+                "feature10": feature10,
+                "feature11": feature11,
+                "feature12": feature12,
+                "feature13": feature13,
+                "feature14": feature14
             }
             print(data)
 
@@ -112,7 +124,7 @@ class TemperatureWidget(QWidget):
             self.worker_thread.stop()
 
             # После 1 секунды возвращаем цвет обратно и перезапускаем поток
-            QTimer.singleShot(10000, self.reset_color)
+            QTimer.singleShot(1000, self.reset_color)
         else:
             # Если предсказание 1, оставляем зеленый цвет
             self.setStyleSheet(f"""
@@ -132,9 +144,7 @@ class TemperatureWidget(QWidget):
                 border-radius: 10px;
             }}
         """)
-        self.worker_thread = WorkerThread(self.widget_id, self.product_id, self.machine_type)
-        self.worker_thread.prediction_result.connect(self.update_color)
-        self.worker_thread.start()
+        self.worker_thread.start()  # Перезапускаем поток при необходимости
 
     def closeEvent(self, event):
         """
