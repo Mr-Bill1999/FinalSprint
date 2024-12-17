@@ -14,4 +14,5 @@ class PredictionRequest(BaseModel):
     feature11: int
     feature12: int
     feature13: int
+    feature14: int
 
